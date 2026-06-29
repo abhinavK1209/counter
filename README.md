@@ -19,7 +19,7 @@ Then visit `http://localhost:4173`.
 - Logs individual codes, mixed lists, and inclusive ranges such as `0000-0200`
 - Includes one-click sets for repeated digits, sequences, likely years, and keypad patterns
 - Shows all 10,000 codes in an interactive map: green is logged, blank is still to do
-- Pulses pattern-based suggestions in amber, including keypad walks, mirrors, triple digits, double pairs, repeats, skip-count sequences, consecutive number pairs, and round-number endings
+- Pulses pattern-based suggestions in amber, including straight and diagonal keypad walks, ordered digits, matching bookends, mirrors, repeats, skip-count sequences, and wraparound steps
 - Adds every valid calendar date in both MM/DD and DD/MM order, plus years from 1900–2026
 - Includes all valid MM/YY combinations from `01/00` through `12/99`
 - Includes independently chosen DD/DD pairs (`01/01–31/31`) and MM/MM pairs (`01/01–12/12`)
