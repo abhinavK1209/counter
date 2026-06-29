@@ -93,6 +93,7 @@ button { color: inherit; }
 
 .button-quiet { background: transparent; }
 .button-quiet:hover { background: rgba(20, 19, 17, 0.06); }
+.baseline-action { color: #187547; }
 .danger-text { color: #a13920; }
 
 .hero {
@@ -567,6 +568,7 @@ footer {
   .site-header, main, footer { width: min(100% - 28px, 1180px); }
   .site-header { height: 72px; }
   .header-actions .button { min-height: 38px; padding: 0 10px; font-size: 11px; }
+  .merge-label-long { display: none; }
   .hero { min-height: 390px; padding: 58px 0; }
   .workspace { margin-inline: -14px; padding-inline: 14px; }
   .section-heading { display: block; }
