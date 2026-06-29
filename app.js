@@ -153,6 +153,73 @@ for (let firstMonth = 1; firstMonth <= 12; firstMonth += 1) {
   }
 }
 
+const tripleDigits = [];
+const allDoublePairs = [];
+for (const repeated of digits) {
+  for (const other of digits) {
+    if (repeated === other) continue;
+    for (let position = 0; position < 4; position += 1) {
+      const code = Array(4).fill(repeated);
+      code[position] = other;
+      tripleDigits.push(code.join(""));
+    }
+    allDoublePairs.push(`${repeated}${repeated}${other}${other}`);
+  }
+}
+suggest(tripleDigits, "Triple digit");
+suggest(allDoublePairs, "Double pair");
+
+const skipSequences = [];
+for (const step of [2, 3]) {
+  for (let start = 0; start + step * 3 <= 9; start += 1) {
+    const sequence = Array.from({ length: 4 }, (_, index) => start + index * step).join("");
+    skipSequences.push(sequence, [...sequence].reverse().join(""));
+  }
+}
+suggest(skipSequences, "Skip-count sequence");
+
+const consecutiveNumberPairs = [];
+for (let number = 0; number < 99; number += 1) {
+  consecutiveNumberPairs.push(
+    `${padTwo(number)}${padTwo(number + 1)}`,
+    `${padTwo(number + 1)}${padTwo(number)}`,
+  );
+}
+suggest(consecutiveNumberPairs, "Consecutive number pair");
+
+const roundEndings = Array.from(
+  { length: 100 },
+  (_, number) => `${padTwo(number)}00`,
+);
+suggest(roundEndings, "Round-number ending");
+
+const keypadPositions = new Map([
+  ["1", [0, 0]], ["2", [1, 0]], ["3", [2, 0]],
+  ["4", [0, 1]], ["5", [1, 1]], ["6", [2, 1]],
+  ["7", [0, 2]], ["8", [1, 2]], ["9", [2, 2]],
+  ["0", [1, 3]],
+]);
+const keypadNeighbors = new Map(
+  [...keypadPositions].map(([digit, [x, y]]) => [
+    digit,
+    [...keypadPositions]
+      .filter(([, [nextX, nextY]]) => Math.abs(nextX - x) + Math.abs(nextY - y) === 1)
+      .map(([neighbor]) => neighbor),
+  ]),
+);
+const keypadWalks = [];
+function collectKeypadWalks(path) {
+  if (path.length === 4) {
+    keypadWalks.push(path.join(""));
+    return;
+  }
+  for (const next of keypadNeighbors.get(path.at(-1))) {
+    if (!path.includes(next)) collectKeypadWalks([...path, next]);
+  }
+}
+for (const digit of keypadPositions.keys()) collectKeypadWalks([digit]);
+suggest(keypadWalks, "Keypad walk");
+
 const suggestionOrder = [...new Set([
   "0000", "0131", "3101", "0112", "1201", "3131",
   "0626", "1234", "2580", "1212", "2424", "1225",
@@ -162,6 +229,9 @@ const suggestionOrder = [...new Set([
   "7890", "1379", "2002", "2323", "3690", "1031",
   "1111", "4321", "0852", "2121", "1221", "1236",
   "2222", "0123", "1478", "1313", "2112", "8901",
+  "7771", "9000", "3344", "6699", "0246", "8642",
+  "0369", "9630", "3435", "6564", "1254", "2365",
+  "2541", "6987", "4200", "9900",
   ...patternSuggestions.keys(),
 ])];
 
