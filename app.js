@@ -1,6 +1,7 @@
 const STORAGE_KEY = "fourlog-guesses-v2";
 const LEGACY_STORAGE_KEY = "fourlog-guesses-v1";
 const PAGE_SIZE = 96;
+const VISIBLE_PATTERN_PICKS = 24;
 
 const state = {
   guesses: loadGuesses(),
@@ -221,6 +222,9 @@ for (const digit of keypadPositions.keys()) collectKeypadWalks([digit]);
 suggest(keypadWalks, "Keypad walk");
 
 const suggestionOrder = [...new Set([
+  "7771", "9000", "3344", "6699", "0246", "8642",
+  "0369", "9630", "3435", "6564", "1254", "2365",
+  "2541", "6987", "4200", "9900",
   "0000", "0131", "3101", "0112", "1201", "3131",
   "0626", "1234", "2580", "1212", "2424", "1225",
   "1001", "0126", "0704",
@@ -229,9 +233,6 @@ const suggestionOrder = [...new Set([
   "7890", "1379", "2002", "2323", "3690", "1031",
   "1111", "4321", "0852", "2121", "1221", "1236",
   "2222", "0123", "1478", "1313", "2112", "8901",
-  "7771", "9000", "3344", "6699", "0246", "8642",
-  "0369", "9630", "3435", "6564", "1254", "2365",
-  "2541", "6987", "4200", "9900",
   ...patternSuggestions.keys(),
 ])];
 
@@ -406,7 +407,7 @@ function renderSuggestions() {
   const logged = new Set(state.guesses);
   const untried = suggestionOrder.filter((code) => !logged.has(code));
   const next = untried
-    .slice(0, 12)
+    .slice(0, VISIBLE_PATTERN_PICKS)
     .map((code) => [code, patternSuggestions.get(code)]);
   elements.suggestionRemaining.textContent = untried.length.toLocaleString();
 
