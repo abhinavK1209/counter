@@ -29,6 +29,7 @@ Then visit `http://localhost:4173`.
 - Saves progress in the browser automatically
 - Starts new devices from the bundled 2,235-code progress snapshot
 - Migrates and merges any existing v1 browser progress into the bundled baseline
+- Provides a non-destructive **Merge default** action for devices with older saved state
 - Supports search, sorting, single-code removal, undo, export, and full reset
 
 No account, server, build step, or dependency install is required.

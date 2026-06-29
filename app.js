@@ -26,6 +26,7 @@ const elements = {
   toastText: document.querySelector("#toastText"),
   undo: document.querySelector("#undoButton"),
   export: document.querySelector("#exportButton"),
+  mergeDefault: document.querySelector("#mergeDefaultButton"),
   clear: document.querySelector("#clearButton"),
   clearDialog: document.querySelector("#clearDialog"),
   confirmClear: document.querySelector("#confirmClearButton"),
@@ -494,6 +495,15 @@ elements.export.addEventListener("click", () => {
   link.click();
   URL.revokeObjectURL(link.href);
   showToast("Log exported as a text file", false);
+});
+
+elements.mergeDefault.addEventListener("click", () => {
+  const defaults = window.FOURLOG_DEFAULT_GUESSES || [];
+  if (!defaults.length) {
+    showToast("Default progress is unavailable", false);
+    return;
+  }
+  addCodes(defaults, "default progress");
 });
 
 elements.clear.addEventListener("click", () => elements.clearDialog.showModal());
