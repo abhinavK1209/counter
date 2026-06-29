@@ -27,6 +27,8 @@ Then visit `http://localhost:4173`.
 - Pads short entries to four digits (`7` becomes `0007`)
 - Prevents duplicate guesses
 - Saves progress in the browser automatically
+- Starts new devices from the bundled 2,235-code progress snapshot
+- Migrates and merges any existing v1 browser progress into the bundled baseline
 - Supports search, sorting, single-code removal, undo, export, and full reset
 
 No account, server, build step, or dependency install is required.
