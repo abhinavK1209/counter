@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#11100f" />
+    <title>Fourlog — 4-digit guess tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Fourlog home">
+        <span class="brand-mark">4</span>
+        <span>FOURLOG</span>
+      </a>
+      <div class="header-actions">
+        <button class="button button-quiet" id="exportButton" type="button">Export</button>
+        <button class="button button-quiet danger-text" id="clearButton" type="button">Clear all</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">THE 10,000-CODE CHECKLIST</p>
+          <h1>Guess fast.<br /><em>Never repeat.</em></h1>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>Coverage</span>
+            <strong id="coveragePercent">0%</strong>
+          </div>
+          <div class="progress-track" aria-label="Code coverage">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <p><strong id="loggedCount">0</strong> logged · <span id="remainingCount">10,000</span> remaining</p>
+        </div>
+      </section>
+
+      <section class="workspace" aria-labelledby="add-heading">
+        <div class="section-heading">
+          <div>
+            <p class="section-number">01</p>
+            <h2 id="add-heading">Add guesses</h2>
+          </div>
+          <p>Enter one code, a range, or a mixed list. We’ll pad every code to four digits.</p>
+        </div>
+
+        <form id="guessForm" class="command-form">
+          <label for="guessInput">Codes or ranges</label>
+          <div class="command-row">
+            <input
+              id="guessInput"
+              name="guesses"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="0000-0200, 0420, 8000-8010"
+              aria-describedby="inputHint"
+            />
+            <button class="button button-primary" type="submit">
+              <span>Log guesses</span>
+              <span aria-hidden="true">↵</span>
+            </button>
+          </div>
+          <p class="field-hint" id="inputHint">Separate entries with commas or spaces. Ranges include both ends.</p>
+          <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="quick-panel">
+          <div class="quick-copy">
+            <p class="section-number">QUICK SETS</p>
+            <h3>Common patterns,<br />one click away.</h3>
+          </div>
+          <div class="quick-grid">
+            <button class="quick-card" type="button" data-preset="repeats">
+              <span class="quick-icon">×4</span>
+              <span>
+                <strong>Repeated digits</strong>
+                <small>0000, 1111 … 9999</small>
+              </span>
+              <span class="quick-arrow">+</span>
+            </button>
+            <button class="quick-card" type="button" data-preset="sequences">
+              <span class="quick-icon">→</span>
+              <span>
+                <strong>Simple sequences</strong>
+                <small>0123, 1234 … 9876</small>
+              </span>
+              <span class="quick-arrow">+</span>
+            </button>
+            <button class="quick-card" type="button" data-preset="years">
+              <span class="quick-icon">YR</span>
+              <span>
+                <strong>Likely years</strong>
+                <small>1950 through 2026</small>
+              </span>
+              <span class="quick-arrow">+</span>
+            </button>
+            <button class="quick-card" type="button" data-preset="keypad">
+              <span class="quick-icon">⌗</span>
+              <span>
+                <strong>Keypad patterns</strong>
+                <small>2580, 0852, 1379 + more</small>
+              </span>
+              <span class="quick-arrow">+</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="map-section" aria-labelledby="map-heading">
+        <div class="section-heading map-heading">
+          <div>
+            <p class="section-number">02</p>
+            <h2 id="map-heading">The full picture</h2>
+          </div>
+          <p>Every square is one code from 0000 to 9999. Green is done; empty is still waiting.</p>
+        </div>
+
+        <div class="map-stats">
+          <div>
+            <span class="map-stat-label">Done</span>
+            <strong id="mapDoneCount">0</strong>
+          </div>
+          <div>
+            <span class="map-stat-label">To do</span>
+            <strong id="mapTodoCount">10,000</strong>
+          </div>
+          <div class="map-legend" aria-label="Map legend">
+            <span><i class="legend-swatch done"></i> Logged</span>
+            <span><i class="legend-swatch suggested"></i> Try next</span>
+            <span><i class="legend-swatch todo"></i> To do</span>
+          </div>
+        </div>
+
+        <div class="suggestion-strip">
+          <div class="suggestion-copy">
+            <span class="map-stat-label">PATTERN PICKS</span>
+            <strong>Good ones to try next</strong>
+            <small><span id="suggestionRemaining">0</span> untried pattern and date picks</small>
+          </div>
+          <div class="suggestion-list" id="suggestionList"></div>
+        </div>
+
+        <div class="number-map-shell">
+          <div class="map-top-axis" aria-hidden="true">
+            <span>00</span><span>20</span><span>40</span><span>60</span><span>80</span><span>99</span>
+          </div>
+          <div class="map-body">
+            <div class="map-side-axis" aria-hidden="true">
+              <span>00––</span><span>20––</span><span>40––</span><span>60––</span><span>80––</span><span>99––</span>
+            </div>
+            <div class="canvas-wrap" id="mapCanvasWrap">
+              <canvas
+                id="numberMap"
+                width="1000"
+                height="1000"
+                tabindex="0"
+                aria-label="Interactive map of all 10,000 four-digit codes"
+              ></canvas>
+              <canvas id="suggestionMap" width="1000" height="1000" aria-hidden="true"></canvas>
+              <div class="map-tooltip" id="mapTooltip" hidden>
+                <strong id="mapTooltipCode">0000</strong>
+                <span id="mapTooltipStatus">To do</span>
+              </div>
+            </div>
+          </div>
+          <div class="map-caption">
+            <span>Rows are the first two digits · columns are the last two</span>
+            <span>Click a square to log or remove it</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="log-section" aria-labelledby="log-heading">
+        <div class="section-heading log-heading">
+          <div>
+            <p class="section-number">03</p>
+            <h2 id="log-heading">Your log</h2>
+          </div>
+          <div class="log-tools">
+            <label class="search-box">
+              <span class="sr-only">Search guesses</span>
+              <span aria-hidden="true">⌕</span>
+              <input id="searchInput" type="search" placeholder="Find a code" inputmode="numeric" maxlength="4" />
+            </label>
+            <select id="sortSelect" aria-label="Sort guesses">
+              <option value="recent">Recently added</option>
+              <option value="asc">Lowest first</option>
+              <option value="desc">Highest first</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <span>0000</span>
+          <h3>No guesses logged yet.</h3>
+          <p>Try a range above or add a quick set to get moving.</p>
+        </div>
+        <div class="code-grid" id="codeGrid" aria-live="polite"></div>
+        <button class="button load-more" id="loadMoreButton" type="button" hidden>Show more</button>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span id="toastText"></span>
+      <button id="undoButton" type="button">Undo</button>
+    </div>
+
+    <dialog id="clearDialog">
+      <form method="dialog">
+        <p class="section-number">START FRESH</p>
+        <h2>Clear every guess?</h2>
+        <p>This removes your full log from this browser. There’s no undo after you confirm.</p>
+        <div class="dialog-actions">
+          <button class="button button-quiet" value="cancel">Cancel</button>
+          <button class="button button-danger" id="confirmClearButton" value="confirm">Clear all</button>
+        </div>
+      </form>
+    </dialog>
+
+    <footer>
+      <span>FOURLOG</span>
+      <span>Stored locally in your browser</span>
+    </footer>
+  </body>
+</html>
