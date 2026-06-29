@@ -3,6 +3,7 @@
 const STORAGE_KEY = "fourlog-guesses-v2";
 const LEGACY_STORAGE_KEY = "fourlog-guesses-v1";
 const PAGE_SIZE = 96;
+const VISIBLE_PATTERN_PICKS = 24;
 const TOTAL_CODES = 10000;
 
 // Pattern catalogue lives in patterns.js (loaded first). Fall back to empty
@@ -269,7 +270,7 @@ function renderSuggestions() {
   const untried = suggestionOrder.filter((code) => !logged.has(code));
   elements.suggestionRemaining.textContent = untried.length.toLocaleString();
 
-  const cards = untried.slice(0, 12).map((code) => {
+  const cards = untried.slice(0, VISIBLE_PATTERN_PICKS).map((code) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "suggestion-card";

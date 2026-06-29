@@ -187,9 +187,76 @@
   for (const digit of keypadPositions.keys()) collectKeypadWalks([digit]);
   tag(keypadWalks, "Keypad walk");
 
+  const orderedDigits = [];
+  for (let first = 0; first <= 6; first += 1) {
+    for (let second = first + 1; second <= 7; second += 1) {
+      for (let third = second + 1; third <= 8; third += 1) {
+        for (let fourth = third + 1; fourth <= 9; fourth += 1) {
+          const ascending = `${first}${second}${third}${fourth}`;
+          orderedDigits.push(ascending, [...ascending].reverse().join(""));
+        }
+      }
+    }
+  }
+  tag(orderedDigits, "Ordered digits");
+
+  const modularSequences = [];
+  for (let start = 0; start <= 9; start += 1) {
+    for (let step = 1; step <= 9; step += 1) {
+      const sequence = Array.from(
+        { length: 4 },
+        (_, index) => String((start + step * index) % 10),
+      );
+      if (new Set(sequence).size === 4) modularSequences.push(sequence.join(""));
+    }
+  }
+  tag(modularSequences, "Wraparound step sequence");
+
+  const diagonalKeypadNeighbors = new Map(
+    [...keypadPositions].map(([digit, [x, y]]) => [
+      digit,
+      [...keypadPositions]
+        .filter(([, [nextX, nextY]]) =>
+          Math.max(Math.abs(nextX - x), Math.abs(nextY - y)) === 1)
+        .map(([neighbor]) => neighbor),
+    ]),
+  );
+  const diagonalKeypadWalks = [];
+  function collectDiagonalKeypadWalks(path, usedDiagonal) {
+    if (path.length === 4) {
+      if (usedDiagonal) diagonalKeypadWalks.push(path.join(""));
+      return;
+    }
+    const current = path.at(-1);
+    const [x, y] = keypadPositions.get(current);
+    for (const next of diagonalKeypadNeighbors.get(current)) {
+      if (path.includes(next)) continue;
+      const [nextX, nextY] = keypadPositions.get(next);
+      const isDiagonal = Math.abs(nextX - x) === 1 && Math.abs(nextY - y) === 1;
+      collectDiagonalKeypadWalks([...path, next], usedDiagonal || isDiagonal);
+    }
+  }
+  for (const digit of keypadPositions.keys()) {
+    collectDiagonalKeypadWalks([digit], false);
+  }
+  tag(diagonalKeypadWalks, "Diagonal keypad walk");
+
+  const matchingBookends = [];
+  for (const outer of digits) {
+    for (const firstInner of digits) {
+      for (const secondInner of digits) {
+        matchingBookends.push(`${outer}${firstInner}${secondInner}${outer}`);
+      }
+    }
+  }
+  tag(matchingBookends, "Matching bookends");
+
   // Curated codes surface first in the "try next" strip; the rest follow in
   // insertion order. The Set dedupes the curated head against the full keys.
   const suggestionOrder = [...new Set([
+    "3458", "8752", "1469", "9641", "4703", "6925",
+    "1596", "3574", "9518", "7530", "4384", "6276",
+    "9049", "7837", "5605", "2482",
     "0000", "0131", "3101", "0112", "1201", "3131",
     "0626", "1234", "2580", "1212", "2424", "1225",
     "1001", "0126", "0704",
