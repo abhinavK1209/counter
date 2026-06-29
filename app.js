@@ -1,4 +1,5 @@
-const STORAGE_KEY = "fourlog-guesses-v1";
+const STORAGE_KEY = "fourlog-guesses-v2";
+const LEGACY_STORAGE_KEY = "fourlog-guesses-v1";
 const PAGE_SIZE = 96;
 
 const state = {
@@ -166,9 +167,17 @@ const suggestionOrder = [...new Set([
 function loadGuesses() {
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return Array.isArray(stored) ? stored.filter(isValidCode) : [];
+    if (Array.isArray(stored)) return stored.filter(isValidCode);
+
+    const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
+    const seeded = [...new Set([
+      ...(window.FOURLOG_DEFAULT_GUESSES || []),
+      ...(Array.isArray(legacy) ? legacy : []),
+    ])].filter(isValidCode);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+    return seeded;
   } catch {
-    return [];
+    return [...(window.FOURLOG_DEFAULT_GUESSES || [])].filter(isValidCode);
   }
 }
 
